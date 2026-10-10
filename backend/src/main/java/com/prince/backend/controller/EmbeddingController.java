@@ -1,7 +1,7 @@
 package com.prince.backend.controller;
 
 import com.prince.backend.Model.MovieMatch;
-import com.prince.backend.service.OllamaEmbeddingService;
+import com.prince.backend.service.MovieSearchService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,12 +11,12 @@ import java.util.Map;
 @RequestMapping("/api/embeddings")
 public class EmbeddingController {
 
-    private final OllamaEmbeddingService embeddingService;
+    private final MovieSearchService movieSearchService;
 
 
     public EmbeddingController(
-            OllamaEmbeddingService embeddingService) {
-        this.embeddingService = embeddingService;
+            MovieSearchService movieSearchService) {
+        this.movieSearchService = movieSearchService;
     }
 
     @PostMapping
@@ -32,7 +32,7 @@ public class EmbeddingController {
         }
 
         List<MovieMatch> userQueryMatch =
-                embeddingService.matching(text);
+                movieSearchService.matching(text);
 
         return userQueryMatch;
     }

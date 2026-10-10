@@ -1,0 +1,21 @@
+services:
+  db:
+    # PostgreSQL with the pgvector extension pre-installed.
+    image: pgvector/pgvector:pg17
+    container_name: movie-recommender-db
+    environment:
+      POSTGRES_DB: movies
+      POSTGRES_USER: movies
+      POSTGRES_PASSWORD: movies
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movies -d movies"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
