@@ -26,7 +26,7 @@ public class MovieRepository  {
      */
     public Set<String> findAllTitles() {
         return new HashSet<>(
-                jdbcTemplate.queryForList("SELECT title FROM movies", String.class)
+                jdbcTemplate.queryForList("SELECT title FROM movie_embeddings", String.class)
         );
     }
 
@@ -37,7 +37,7 @@ public class MovieRepository  {
 
         jdbcTemplate.update(
                 """
-                INSERT INTO movies (title, description, embedding)
+                INSERT INTO movie_embeddings (title, description, embedding)
                 VALUES (?, ?, ?::vector)
                 ON CONFLICT (title) DO NOTHING
                 """,
@@ -59,7 +59,7 @@ public class MovieRepository  {
         return jdbcTemplate.query(
                 """
                 SELECT title, description, 1 - (embedding <=> ?::vector) AS similarity
-                FROM movies
+                FROM movie_embeddings
                 ORDER BY embedding <=> ?::vector
                 LIMIT ?
                 """,

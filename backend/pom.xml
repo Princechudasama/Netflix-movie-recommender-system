@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -44,16 +44,30 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- PostgreSQL + pgvector access (plain JDBC, no ORM needed for vector search) -->
+		<!-- Spring Data JPA + Hibernate ORM.
+		     Replaces spring-boot-starter-jdbc: this starter already brings the
+		     connection pool and JDBC support that Hibernate runs on. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<!-- PostgreSQL driver (used by Hibernate under the hood) -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- OPTIONAL: only if you map a pgvector "vector" column with Hibernate
+		     (@JdbcTypeCode(SqlTypes.VECTOR) @Array(length = 768) float[] embedding).
+		     Uncomment it; the version follows the Hibernate version Spring Boot uses.
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-vector</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		-->
 
 		<!-- Flyway schema migrations -->
 		<dependency>
@@ -65,9 +79,11 @@
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
