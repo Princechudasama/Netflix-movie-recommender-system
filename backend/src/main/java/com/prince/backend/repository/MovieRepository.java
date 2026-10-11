@@ -13,7 +13,7 @@ import java.util.Set;
  * Stores movies and their embeddings in PostgreSQL (pgvector).
  */
 @Repository
-public class MovieRepository {
+public class MovieRepository  {
 
     private final JdbcTemplate jdbcTemplate;
 
