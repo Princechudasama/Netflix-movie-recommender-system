@@ -1,7 +1,8 @@
 package com.prince.backend.service;
 
 import com.prince.backend.Model.Movie;
-import com.prince.backend.repository.MovieRepository;
+import com.prince.backend.repository.MovieEmbeddingsRepository;
+import com.prince.backend.repository.MoviesDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -33,16 +34,18 @@ public class MovieSeeder implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(MovieSeeder.class);
 
-    private final MovieRepository movieRepository;
+    private final MoviesDetailsRepository moviesDetailsRepository;
+    private final MovieEmbeddingsRepository movieEmbeddingsRepository;
     private final OllamaEmbeddingService embeddingService;
     private final JsonMapper jsonMapper;
 
     public MovieSeeder(
-            MovieRepository movieRepository,
+            MoviesDetailsRepository moviesDetailsRepository, MovieEmbeddingsRepository movieEmbeddingsRepository,
             OllamaEmbeddingService embeddingService,
             JsonMapper jsonMapper) {
 
-        this.movieRepository = movieRepository;
+        this.moviesDetailsRepository = moviesDetailsRepository;
+        this.movieEmbeddingsRepository = movieEmbeddingsRepository;
         this.embeddingService = embeddingService;
         this.jsonMapper = jsonMapper;
     }
@@ -62,21 +65,21 @@ public class MovieSeeder implements ApplicationRunner {
             );
         }
 
-        Set<String> existingTitles = movieRepository.findAllTitles();
+        List<Movie> existingMovie = moviesDetailsRepository.findAll();
 
         int inserted = 0;
 
         for (Movie movie : movies) {
 
-            if (existingTitles.contains(movie.getTitle())) {
+            if (existingMovie.contains(movie.getTitle())) {
                 continue;
             }
 
             List<Double> embedding =
                     embeddingService.generateEmbedding(movie.getDescription());
 
-            movieRepository.save(movie, embedding);
-            existingTitles.add(movie.getTitle());
+            movieEmbeddingsRepository.saveMovie(movie.getTitle(), movie.getDescription(), embedding.toString());
+            existingMovie.add(movie);
             inserted++;
         }
 
